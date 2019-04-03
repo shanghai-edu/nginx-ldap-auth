@@ -8,6 +8,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/utils/captcha"
 	"github.com/shanghai-edu/nginx-ldap-auth/g"
 	"github.com/shanghai-edu/nginx-ldap-auth/utils"
@@ -60,23 +61,23 @@ func (this *LoginController) Get() {
 	timeDirect := g.Config().Control.TimeAcl.Direct
 	timeDeny := g.Config().Control.TimeAcl.Deny
 	if utils.IpCheck(clientIP, DenyIPS) {
-		beego.Notice(fmt.Sprintf("%s - - [%s] Login Failed: IP %s is not allowed", clientIP, logtime, clientIP))
+		logs.Notice(fmt.Sprintf("%s - - [%s] Login Failed: IP %s is not allowed", clientIP, logtime, clientIP))
 		this.Abort("401")
 	}
 
 	if utils.IpCheck(clientIP, DirectIPS) {
 		this.SetSession("uname", clientIP)
-		beego.Notice(fmt.Sprintf("%s - %s [%s] Login Successed: Direct IP", clientIP, clientIP, logtime))
+		logs.Notice(fmt.Sprintf("%s - %s [%s] Login Successed: Direct IP", clientIP, clientIP, logtime))
 		this.TplName = "direct.tpl"
 		return
 	}
 	if utils.TimeCheck(timeDeny) {
-		beego.Notice(fmt.Sprintf("%s - - [%s] Login Failed: This Time is not allowed", clientIP, logtime))
+		logs.Notice(fmt.Sprintf("%s - - [%s] Login Failed: This Time is not allowed", clientIP, logtime))
 		this.Abort("403")
 	}
 	if utils.TimeCheck(timeDirect) {
 		this.SetSession("uname", "timeDirect")
-		beego.Notice(fmt.Sprintf("%s - %s [%s] Login Successed: Direct Time", clientIP, "timeDirect", logtime))
+		logs.Notice(fmt.Sprintf("%s - %s [%s] Login Successed: Direct Time", clientIP, "timeDirect", logtime))
 		this.TplName = "direct.tpl"
 		return
 	}
@@ -93,7 +94,7 @@ func (this *LoginController) Post() {
 	if loginFailed != nil {
 		if !cpt.VerifyReq(this.Ctx.Request) {
 			this.SetSession("loginFailed", "3")
-			beego.Notice(fmt.Sprintf("%s - - [%s] Login Failed: Captcha Wrong", clientIP, logtime))
+			logs.Notice(fmt.Sprintf("%s - - [%s] Login Failed: Captcha Wrong", clientIP, logtime))
 			this.Ctx.Redirect(302, fmt.Sprintf("/login?target=%s", target))
 			return
 		}
@@ -102,7 +103,7 @@ func (this *LoginController) Post() {
 	if len(g.Config().Control.AllowUser) > 0 {
 		if !utils.In_slice(username, g.Config().Control.AllowUser) {
 			this.SetSession("loginFailed", "2")
-			beego.Notice(fmt.Sprintf("%s - - [%s] Login Failed: user %s is not allowed", clientIP, logtime, username))
+			logs.Notice(fmt.Sprintf("%s - - [%s] Login Failed: user %s is not allowed", clientIP, logtime, username))
 			this.Ctx.Redirect(302, fmt.Sprintf("/login?target=%s", target))
 			return
 		}
@@ -112,15 +113,15 @@ func (this *LoginController) Post() {
 		//登录成功设置session
 
 		if target == "" || target == "/login" {
-			beego.Warning(fmt.Sprintf("%s - - [%s] Login Failed: Missing X-Target", clientIP, logtime))
+			logs.Warning(fmt.Sprintf("%s - - [%s] Login Failed: Missing X-Target", clientIP, logtime))
 			this.Ctx.Redirect(302, "/")
 		}
 		this.SetSession("uname", username)
-		beego.Notice(fmt.Sprintf("%s - %s [%s] Login Successed", clientIP, username, logtime))
+		logs.Notice(fmt.Sprintf("%s - %s [%s] Login Successed", clientIP, username, logtime))
 		this.Ctx.Redirect(302, target)
 	} else {
 		this.SetSession("loginFailed", "1")
-		beego.Notice(fmt.Sprintf("%s - - [%s] Login Failed: %s", clientIP, logtime, err.Error()))
+		logs.Notice(fmt.Sprintf("%s - - [%s] Login Failed: %s", clientIP, logtime, err.Error()))
 		this.Ctx.Redirect(302, fmt.Sprintf("/login?target=%s", target))
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/shanghai-edu/nginx-ldap-auth/g"
 	"github.com/shanghai-edu/nginx-ldap-auth/utils"
 	"github.com/toolkits/file"
@@ -44,7 +45,7 @@ func (this *ControlController) Get() {
 		this.Ctx.Output.Body([]byte(file.SelfDir()))
 	case "reload":
 		g.ParseConfig(g.ConfigFile)
-		beego.Notice(fmt.Sprintf("%s - - [%s] Config Reloaded", clientIP, logtime))
+		logs.Notice(fmt.Sprintf("%s - - [%s] Config Reloaded", clientIP, logtime))
 		this.Ctx.Output.Body([]byte("config reloaded"))
 	}
 }
