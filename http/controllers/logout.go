@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 )
 
 type LogoutController struct {
@@ -18,7 +19,7 @@ func (this *LogoutController) Get() {
 	if uname != nil {
 		this.DelSession("uname")
 		this.DelSession("loginFailed")
-		beego.Notice(fmt.Sprintf("%s - %s [%s] Logout Successed", clientIP, uname, logtime))
+		logs.Notice(fmt.Sprintf("%s - %s [%s] Logout Successed", clientIP, uname, logtime))
 	}
 	this.Ctx.Redirect(302, "/")
 }

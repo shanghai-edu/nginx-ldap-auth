@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 
 	"github.com/shanghai-edu/nginx-ldap-auth/g"
 	"github.com/shanghai-edu/nginx-ldap-auth/http/controllers"
@@ -18,7 +19,7 @@ func Start() {
 	beego.SetStaticPath("/static", "static")
 
 	if !g.Config().Http.Debug {
-		beego.SetLevel(beego.LevelInformational)
+		logs.SetLevel(logs.LevelInformational)
 	}
 	ConfigRouters()
 	beego.ErrorController(&controllers.ErrorController{})
