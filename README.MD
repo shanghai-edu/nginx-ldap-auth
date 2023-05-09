@@ -8,7 +8,7 @@ A simple example of LDAP authentication using ngx_http_auth_request_module by go
 #### Build from source
 ```
 # git clone https://github.com/shanghai-edu/nginx-ldap-auth
-# go get ./...
+# go mod tidy
 # chmod +x control
 # ./control build
 # ./control pack

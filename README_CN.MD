@@ -7,7 +7,7 @@ Golang 实现
 #### Build from source
 ```
 # git clone https://github.com/shanghai-edu/nginx-ldap-auth
-# go get ./...
+# go mod tidy
 # chmod +x control
 # ./control build
 # ./control pack
