@@ -1,6 +1,6 @@
 module github.com/shanghai-edu/nginx-ldap-auth
 
-go 1.20
+go 1.19
 
 require (
 	github.com/toolkits/file v0.0.0-20160325033739-a5b3c5147e07
